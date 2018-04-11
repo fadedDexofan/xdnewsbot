@@ -1,7 +1,8 @@
 require("dotenv").config();
 const Telegraf = require("telegraf");
 const rateLimit = require("telegraf-ratelimit");
-const https = require("https");
+const Koa = require("koa");
+const koaBody = require("koa-body");
 const moment = require("moment");
 const Event = require("./models/Event");
 const connectDB = require("./db/connection");
@@ -223,8 +224,16 @@ bot.on("successful_payment", async (ctx) => {
     if (DEBUG) {
       bot.startPolling();
     } else {
-      https.createServer(null, bot.webhookCallback("/bot")).listen(3000);
-      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru/bot");
+      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:443/bot");
+      const app = new Koa();
+      app.use(koaBody());
+      app.use(
+        (ctx, next) =>
+          (ctx.method === "POST" || ctx.url === "/bot"
+            ? bot.handleUpdate(ctx.request.body, ctx.response)
+            : next()),
+      );
+      app.listen(3000);
     }
     console.log("Bot successfully started");
   } catch (err) {
