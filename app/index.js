@@ -223,8 +223,8 @@ bot.on("successful_payment", async (ctx) => {
     if (DEBUG) {
       bot.startPolling();
     } else {
-      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:3000/bot");
-      https.createServer(bot.webhookCallback("/bot")).listen(3000);
+      bot.telegram.setWebhook(`https://xdnews-bot.xadev.ru:${process.env.PORT}/bot`);
+      https.createServer(bot.webhookCallback("/bot")).listen(process.env.PORT);
     }
     console.log("Bot successfully started");
   } catch (err) {
