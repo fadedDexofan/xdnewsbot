@@ -1,6 +1,7 @@
 require("dotenv").config();
 const Telegraf = require("telegraf");
 const rateLimit = require("telegraf-ratelimit");
+const https = require("https");
 const moment = require("moment");
 const Event = require("./models/Event");
 const connectDB = require("./db/connection");
@@ -223,7 +224,7 @@ bot.on("successful_payment", async (ctx) => {
       bot.startPolling();
     } else {
       bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:3000/bot");
-      bot.startWebhook("/bot", null, 3000);
+      https.createServer(bot.webhookCallback("/bot")).listen(3000);
     }
     console.log("Bot successfully started");
   } catch (err) {
