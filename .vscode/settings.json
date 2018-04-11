@@ -1,0 +1,30 @@
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/coverge": true
+  },
+  "editor.formatOnSave": true,
+  "files.autoSave": "off",
+  "editor.detectIndentation": true,
+  "prettier.eslintIntegration": true,
+  "cSpell.language": "en,ru",
+  "cSpell.words": [
+    "algolia",
+    "csrf",
+    "definitelytyped",
+    "mongoolia",
+    "promisified",
+    "middlewares",
+    "virtuals",
+    "backend",
+    "timestamps",
+    "токен",
+    "bodyparser",
+    "togudev",
+    "gitlab",
+    "Telegraf"
+  ],
+  "editor.tabSize": 2,
+  "eslint.packageManager": "yarn",
+  "files.eol": "\r\n"
+}

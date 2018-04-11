@@ -1,0 +1,25 @@
+{
+  "name": "telegram_bot",
+  "version": "1.0.0",
+  "main": "app",
+  "license": "MIT",
+  "scripts": {
+    "start": "pm2 start app",
+    "dev": "nodemon --inspect app",
+    "lint": "eslint app"
+  },
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "moment": "^2.22.0",
+    "mongoose": "^5.0.13",
+    "telegraf": "^3.20.0",
+    "telegraf-ratelimit": "^2.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.10.0",
+    "nodemon": "^1.17.3",
+    "prettier-eslint": "^8.8.1"
+  }
+}
