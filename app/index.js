@@ -8,6 +8,8 @@ const { createInvoice, isAdmin, isJson } = require("./helpers");
 
 const { Markup } = Telegraf;
 
+const DEBUG = process.env.NODE_ENV === "development";
+
 moment.locale("ru");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -217,7 +219,12 @@ bot.on("successful_payment", async (ctx) => {
   try {
     await connectDB(process.env.DB_URL);
     console.log(`Successfully connected to MongoDB at ${process.env.DB_URL}`);
-    bot.startPolling();
+    if (DEBUG) {
+      bot.startPolling();
+    } else {
+      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:3000/bot");
+      bot.startWebhook("/bot", null, 3000);
+    }
     console.log("Bot successfully started");
   } catch (err) {
     console.error(err);
