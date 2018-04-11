@@ -1,10 +1,10 @@
 {
   "name": "telegram_bot",
   "version": "1.0.0",
-  "main": "app/index.js",
+  "main": "app",
   "license": "MIT",
   "scripts": {
-    "start": "pm2 start app/index.js",
+    "start": "pm2 start app",
     "dev": "nodemon --inspect app",
     "lint": "eslint app"
   },
