@@ -224,7 +224,7 @@ bot.on("successful_payment", async (ctx) => {
     if (DEBUG) {
       bot.startPolling();
     } else {
-      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:443/bot");
+      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru/bot");
       const app = new Koa();
       app.use(koaBody());
       app.use(
