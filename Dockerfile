@@ -7,5 +7,5 @@ ENV NODE_ENV=production
 RUN apk add --no-cache make gcc g++ python
 RUN yarn install && npm install -g pm2
 
-EXPOSE 8443
+EXPOSE 3000
 CMD ["npm", "start"]
