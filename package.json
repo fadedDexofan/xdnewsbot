@@ -4,7 +4,7 @@
   "main": "app",
   "license": "MIT",
   "scripts": {
-    "start": "pm2 start app",
+    "start": "pm2-runtime start app",
     "dev": "nodemon --inspect app",
     "lint": "eslint app"
   },
