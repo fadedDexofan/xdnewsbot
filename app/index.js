@@ -3,7 +3,7 @@ const Telegraf = require("telegraf");
 const rateLimit = require("telegraf-ratelimit");
 const express = require("express");
 const moment = require("moment");
-const logger = require("./utils/logger");
+const { logger } = require("./utils");
 const Event = require("./models/Event");
 const connectDB = require("./db/connection");
 const { createInvoice, isAdmin, isJson } = require("./helpers");
@@ -200,6 +200,7 @@ Event.find().then((events) => {
       logger.info(`${ctx.from.username} (${ctx.from.id}) собирается оплатить участие в "${name}"`);
       try {
         await ctx.replyWithInvoice(createInvoice(event));
+        await ctx.answerCbQuery();
         logger.info(
           `Счет для ${ctx.from.username} (${ctx.from.id}) за событие "${name}" успешно выставлен`,
         );
