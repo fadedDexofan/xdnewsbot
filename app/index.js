@@ -1,8 +1,7 @@
 require("dotenv").config();
 const Telegraf = require("telegraf");
 const rateLimit = require("telegraf-ratelimit");
-const Koa = require("koa");
-const koaBody = require("koa-body");
+const express = require("express");
 const moment = require("moment");
 const Event = require("./models/Event");
 const connectDB = require("./db/connection");
@@ -13,6 +12,7 @@ const { Markup } = Telegraf;
 const DEBUG = process.env.NODE_ENV === "development";
 
 moment.locale("ru");
+
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.telegram.getMe().then((botInfo) => {
@@ -224,16 +224,15 @@ bot.on("successful_payment", async (ctx) => {
     if (DEBUG) {
       bot.startPolling();
     } else {
-      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru/bot");
-      const app = new Koa();
-      app.use(koaBody());
-      app.use(
-        (ctx, next) =>
-          (ctx.method === "POST" || ctx.url === "/bot"
-            ? bot.handleUpdate(ctx.request.body, ctx.response)
-            : next()),
-      );
-      app.listen(3000);
+      const app = express();
+      app.use(bot.webhookCallback("/bot"));
+      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:443/bot");
+      app.get("/", (req, res) => {
+        res.send("resp");
+      });
+      app.listen(3000, () => {
+        console.log("Server started at port 3000");
+      });
     }
     console.log("Bot successfully started");
   } catch (err) {
