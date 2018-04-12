@@ -58,7 +58,7 @@ async function getEventsPayload() {
     .concat([[Markup.callbackButton("🔄 Обновить", "update_events")]]);
   const eventsMessage = await eventsToMessage(events);
   return [
-    `*Текущие события:*\n\n${eventsMessage}`,
+    `*Текущие события:*\n\n${eventsMessage || "На ближайшее время нет событий 🕸"}`,
     Markup.inlineKeyboard(eventButtons).extra({ parse_mode: "Markdown" }),
   ];
 }
@@ -124,7 +124,6 @@ bot.command("add", async (ctx) => {
         ctx.from.id
       }] попытался вызвать команду /add не обладая правами администратора`,
     );
-    ctx.reply("Необходимо обладать правами администратора.");
   } else {
     let payload = ctx.message.text.replace("/add ", "");
     logger.info(
@@ -176,7 +175,6 @@ bot.command("add", async (ctx) => {
 
 bot.command("/remove", async (ctx) => {
   if (!ctx.state.isAdmin) {
-    ctx.reply("Необходимо обладать правами администратора.");
     logger.warn(
       `${ctx.from.username} [${
         ctx.from.id
