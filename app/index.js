@@ -225,11 +225,8 @@ bot.on("successful_payment", async (ctx) => {
       bot.startPolling();
     } else {
       const app = express();
-      app.use(bot.webhookCallback("/bot"));
-      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:443/bot");
-      app.get("/", (req, res) => {
-        res.send("resp");
-      });
+      app.use(bot.webhookCallback("/hgQbAWfe"));
+      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:443/hgQbAWfe");
       app.listen(3000, () => {
         console.log("Server started at port 3000");
       });
