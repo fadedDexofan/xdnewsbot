@@ -3,21 +3,18 @@ const Telegraf = require("telegraf");
 const rateLimit = require("telegraf-ratelimit");
 const express = require("express");
 const moment = require("moment");
+const logger = require("./utils/logger");
 const Event = require("./models/Event");
 const connectDB = require("./db/connection");
 const { createInvoice, isAdmin, isJson } = require("./helpers");
 
 const { Markup } = Telegraf;
 
-const DEBUG = process.env.NODE_ENV === "development";
+const DEBUG = process.env.NODE_ENV !== "production";
 
 moment.locale("ru");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-
-bot.telegram.getMe().then((botInfo) => {
-  bot.options.username = botInfo.username;
-});
 
 const limitConfig = {
   window: 1000,
@@ -30,7 +27,7 @@ bot.use(async (ctx, next) => {
   const start = Date.now();
   await next();
   const ms = Date.now() - start;
-  console.log(`Время ответа - ${ms} ms`);
+  logger.info(`Время ответа - ${ms} ms`);
 });
 
 bot.catch((err) => console.error(err));
@@ -67,8 +64,9 @@ async function getEventsPayload() {
 }
 
 bot.start(async (ctx) => {
+  logger.info(`${ctx.from.username} [${ctx.from.id}] использовал команду /start`);
   ctx.reply(
-    "Привет! Выбери действие нажав на кнопку.",
+    "Привет! Выбери действие нажав на кнопку снизу 🙂",
     Markup.keyboard([
       [Markup.button("Текущие 📢"), Markup.button("Мои 🎟")],
       [Markup.button("Посещенные 📜")],
@@ -78,11 +76,13 @@ bot.start(async (ctx) => {
   );
 });
 
-bot.hears("Текущие 📢", async ({ replyWithMarkdown }) =>
-  replyWithMarkdown(...(await getEventsPayload())),
-);
+bot.hears("Текущие 📢", async (ctx) => {
+  logger.info(`${ctx.from.username} [${ctx.from.id}] нажал кнопку "Текущие 📢"`);
+  ctx.replyWithMarkdown(...(await getEventsPayload()));
+});
 
 bot.hears("Мои 🎟", async (ctx) => {
+  logger.info(`${ctx.from.username} [${ctx.from.id}] нажал кнопку "Мои 🎟"`);
   const userEvents = await Event.find({
     "participants.userId": ctx.from.id,
     startDate: { $gte: Date.now() },
@@ -100,6 +100,7 @@ bot.hears("Мои 🎟", async (ctx) => {
 });
 
 bot.hears("Посещенные 📜", async (ctx) => {
+  logger.info(`${ctx.from.username} [${ctx.from.id}] нажал кнопку "Посещенные 📜"`);
   const events = await Event.find({
     "participants.userId": ctx.from.id,
     startDate: { $lt: Date.now() },
@@ -118,9 +119,17 @@ bot.hears("Посещенные 📜", async (ctx) => {
 
 bot.command("add", async (ctx) => {
   if (!ctx.state.isAdmin) {
+    logger.warn(
+      `${ctx.from.username} [${
+        ctx.from.id
+      }] попытался вызвать команду /add не обладая правами администратора`,
+    );
     ctx.reply("Необходимо обладать правами администратора.");
   } else {
     let payload = ctx.message.text.replace("/add ", "");
+    logger.info(
+      `${ctx.from.username} [${ctx.from.id}] вызвал команду /add с параметрами: ${payload}`,
+    );
     if (payload && isJson(payload)) {
       payload = JSON.parse(payload);
       const {
@@ -139,8 +148,13 @@ bot.command("add", async (ctx) => {
       };
       try {
         await Event.create(eventPayload);
+        logger.info(`${ctx.from.username} [${ctx.from.id}] успешно добавил событие: ${name}`);
         ctx.replyWithMarkdown(`Событие *${name}* успешно добавлено.`);
       } catch (err) {
+        logger.error(
+          `${ctx.from.username} [${ctx.from.id}] Ошибка в результате добавления события`,
+        );
+        logger.error(err);
         ctx.reply("Ошибка добавления события.");
       }
     } else {
@@ -163,17 +177,31 @@ bot.command("add", async (ctx) => {
 bot.command("/remove", async (ctx) => {
   if (!ctx.state.isAdmin) {
     ctx.reply("Необходимо обладать правами администратора.");
+    logger.warn(
+      `${ctx.from.username} [${
+        ctx.from.id
+      }] попытался вызвать команду /remove не обладая правами администратора`,
+    );
   } else {
     const eventName = ctx.message.text.replace("/remove ", "");
+    logger.info(
+      `${ctx.from.username} [${ctx.from.id}] вызвал команду /remove с параметром: ${eventName}`,
+    );
     try {
       const event = await Event.findOne({ name: eventName }).exec();
       if (event) {
         await event.remove();
         ctx.replyWithMarkdown(`Событие *${eventName}* удалено.`);
+        logger.info(`${ctx.from.username} [${ctx.from.id}] удалил событие: ${eventName}`);
       } else {
         ctx.replyWithMarkdown(`Событие *${eventName}* не найдено.`);
       }
     } catch (err) {
+      logger.error(
+        `${ctx.from.username} [${
+          ctx.from.id
+        }] попытался удалить событие ${eventName} с ошибкой: ${err}`,
+      );
       ctx.reply("Не удалось удалить событие.");
     }
   }
@@ -183,7 +211,7 @@ Event.find().then((events) => {
   events.forEach((event) => {
     const { name } = event;
     bot.action(name, async (ctx) => {
-      console.log(`${ctx.from.username} собирается оплатить ${name}.`);
+      logger.info(`${ctx.from.username} [${ctx.from.id}] собирается оплатить: ${name}`);
       await ctx.replyWithInvoice(createInvoice(event));
     });
   });
@@ -199,6 +227,7 @@ bot.action("update_events", async (ctx) => {
       await ctx.answerCbQuery("Обновления не найдены");
     }
   }
+  logger.info(`${ctx.from.username} [${ctx.from.id}] обновил список текущих событий`);
 });
 
 bot.on("pre_checkout_query", ({ answerPreCheckoutQuery }) => answerPreCheckoutQuery(true));
@@ -210,17 +239,20 @@ bot.on("successful_payment", async (ctx) => {
   }).exec();
   event.participants.addToSet({ name, email, userId: ctx.from.id });
   await event.save();
-  console.log(
-    `${ctx.from.first_name} (${ctx.from.username}) заплатил ${ctx.message.successful_payment
-      .total_amount / 100} ₽.`,
+  logger.info(
+    `${ctx.from.first_name} (${ctx.from.username} [${ctx.from.id}]) заплатил ${ctx.message
+      .successful_payment.total_amount / 100} ₽.`,
   );
-  console.log(ctx.message.successful_payment.order_info);
+  logger.info(`Данные заказа: ${ctx.message.successful_payment.order_info}`);
+  logger.info(
+    `${ctx.from.username} [${ctx.from.id}] зарегистрировался на мероприятие: ${event.name}`,
+  );
 });
 
 (async () => {
   try {
     await connectDB(process.env.DB_URL);
-    console.log(`Successfully connected to MongoDB at ${process.env.DB_URL}`);
+    logger.info("Бот успешно подключался к MongoDB.");
     if (DEBUG) {
       bot.startPolling();
     } else {
@@ -228,11 +260,13 @@ bot.on("successful_payment", async (ctx) => {
       app.use(bot.webhookCallback("/hgQbAWfe"));
       bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:443/hgQbAWfe");
       app.listen(3000, () => {
-        console.log("Server started at port 3000");
+        logger.info("Запущен локальный сервер на порту 3000");
       });
     }
-    console.log("Bot successfully started");
+    const botInfo = await bot.telegram.getMe();
+    bot.options.username = botInfo.username;
+    logger.info(`Бот [${bot.options.username}] успешно запущен`);
   } catch (err) {
-    console.error(err);
+    logger.log(`Во время запуска бота произошла ошибка: ${err}`);
   }
 })();
