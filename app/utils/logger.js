@@ -6,7 +6,9 @@ const { printf, timestamp, combine } = format;
 const logDir = "logs";
 
 const tsFormat = () => new Date().toLocaleTimeString();
-const logFormat = printf((info) => `${info.timestamp} ${info.level}: ${info.message}`);
+const logFormat = printf(
+  (info) => `[${info.level.toUpperCase()}][${info.timestamp}] ${info.message}`,
+);
 
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
@@ -16,9 +18,9 @@ const logger = createLogger({
   format: combine(timestamp(), logFormat),
   transports: [
     new DailyRotation({
-      filename: `${logDir}/bot-%DATE%.log`,
-      timestamp: tsFormat,
-      datePattern: "DD-MM-YY",
+      filename: `${logDir}/%DATE%.log`,
+      timestamp,
+      datePattern: "YYYY-MM-DD",
       prepend: true,
       level: process.env.NODE_ENV === "development" ? "verbose" : "info",
       maxSize: "5mb",
