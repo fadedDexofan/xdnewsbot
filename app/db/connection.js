@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const DEBUG = process.env.NODE_ENV !== "production";
+const DEBUG = process.env.NODE_ENV === "development";
 
 module.exports = async (url) =>
   new Promise((resolve, reject) => {

@@ -46,7 +46,7 @@ const addEventHandler = async (ctx) => {
       const schema = `{
   "name": !String,
   "description": !String,
-  "price": !Number (>=60),
+  "price": !Number (0 || >=60),
   "startDate": !Date (YYYY-MM-DD HH:MM),
   "maxParticipants": !Number,
   "photoUrl": !String,

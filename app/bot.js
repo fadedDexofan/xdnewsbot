@@ -7,7 +7,7 @@ const { logError } = require("./helpers");
 const { logger } = require("./utils");
 const handlers = require("./handlers");
 
-const DEBUG = process.env.NODE_ENV !== "production";
+const DEBUG = process.env.NODE_ENV === "development";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 

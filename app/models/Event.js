@@ -15,7 +15,14 @@ const eventSchema = new Schema(
   {
     name: { type: String, required: true, unique: true },
     url: { type: String },
-    price: { type: Number, required: true, min: 60 },
+    price: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: (val) => val === 0 || val >= 60,
+        message: "{PATH} should be  0 || >=60",
+      },
+    },
     description: { type: String, required: true },
     startDate: { type: Date, required: true, default: Date.now() },
     photoUrl: { type: String, required: false },

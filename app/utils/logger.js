@@ -5,7 +5,7 @@ const DailyRotation = require("winston-daily-rotate-file");
 const { printf, timestamp, combine } = format;
 const logDir = "logs";
 
-const DEBUG = process.env.NODE_ENV !== "production";
+const DEBUG = process.env.NODE_ENV === "development";
 
 const tsFormat = () => new Date().toLocaleTimeString();
 const logFormat = printf(
