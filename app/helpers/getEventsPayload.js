@@ -9,7 +9,8 @@ const eventsToMessage = (events) =>
     } = event;
     const date = moment(startDate).format("D MMMM, HH:mm");
     const freePlaces = maxParticipants - participants.length;
-    return `${acc}*${name}*\n${description}\n\n📆 ${date}\n🎟 Участие: ${price} ₽\n👥 Мест: ${freePlaces} из ${maxParticipants}\n\n`;
+    const enterPrice = price ? `${price} ₽` : "бесплатно";
+    return `${acc}*${name}*\n${description}\n\n📆 ${date}\n🎟 Участие: ${enterPrice}\n👥 Мест: ${freePlaces} из ${maxParticipants}\n\n`;
   }, "");
 
 module.exports = async () => {
