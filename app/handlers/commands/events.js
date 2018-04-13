@@ -8,6 +8,7 @@ const eventsHandler = async (ctx) => {
     logger.info(`${ctx.from.username} (${ctx.from.id}) вызвал команду /events`);
     const events = await Event.find().exec();
     if (events.length) {
+      events.sort((a, b) => a.startDate - b.startDate);
       const allEvents = events.reduce(
         (acc, event) => `${acc}*${event.name}* (\`${event.id}\`)\n`,
         "",
