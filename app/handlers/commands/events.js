@@ -6,9 +6,10 @@ const eventsHandler = async (ctx) => {
     logger.warn(`${ctx.from.username} (${ctx.from.id}) попытался вызвать команду /events`);
   } else {
     logger.info(`${ctx.from.username} (${ctx.from.id}) вызвал команду /events`);
-    const events = await Event.find().exec();
+    let events = await Event.find().exec();
     if (events.length) {
-      events.sort((a, b) => a.startDate - b.startDate);
+      events = events.slice(0, 20);
+      events.sort((a, b) => b.createdAt - a.createdAt);
       const allEvents = events.reduce(
         (acc, event) => `${acc}*${event.name}* (\`${event.id}\`)\n`,
         "",
