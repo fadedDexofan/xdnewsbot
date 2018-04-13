@@ -3,8 +3,8 @@ const { sendInvoice } = require("../../helpers");
 const { logger } = require("../../utils");
 
 const checkoutHandler = async (ctx) => {
-  const eventName = ctx.update.callback_query.data;
-  const event = await Event.findOne({ name: eventName }).exec();
+  const eventId = ctx.update.callback_query.data;
+  const event = await Event.findById(eventId).exec();
   if (event) {
     await sendInvoice(ctx, event);
   } else {

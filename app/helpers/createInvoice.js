@@ -30,7 +30,7 @@ module.exports = (event) => {
       },
     },
     prices: [{ label: event.name, amount: Math.trunc(event.price * 100) }],
-    payload: { name: event.name },
+    payload: { id: event.id },
     reply_markup: Markup.inlineKeyboard(buttonsPayload),
   };
 };

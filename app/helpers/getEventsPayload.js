@@ -16,7 +16,7 @@ module.exports = async () => {
   const events = await Event.find({ startDate: { $gte: Date.now() } }).exec();
   events.sort((a, b) => a.startDate - b.startDate);
   const eventButtons = events
-    .map((event) => [Markup.callbackButton(event.name, event.name)])
+    .map((event) => [Markup.callbackButton(event.name, event.id)])
     .concat([[Markup.callbackButton("🔄 Обновить", "update_events")]]);
   const eventsMessage = eventsToMessage(events) || "На ближайшее время нет событий 🕸";
   return [
