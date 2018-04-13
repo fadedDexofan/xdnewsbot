@@ -7,7 +7,7 @@ const userEventsHandler = async (ctx) => {
     startDate: { $gte: Date.now() },
   }).exec();
   const myEvents = userEvents.reduce((acc, event) => {
-    const date = moment(event.startDate).format("D MMMM YY, HH:mm");
+    const date = moment(event.startDate).format("D MMMM, HH:mm");
     return `${acc}*${event.name}* (${date})\n`;
   }, "");
   if (myEvents) {

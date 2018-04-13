@@ -7,7 +7,7 @@ const visitedEventsHandler = async (ctx) => {
     startDate: { $lt: Date.now() },
   }).exec();
   const eventsPayload = events.reduce((acc, event) => {
-    const date = moment(event.startDate).format("D MMMM YY, HH:mm");
+    const date = moment(event.startDate).format("D MMMM YYYY, HH:mm");
     return `${acc}*${event.name}* (${date})\n`;
   }, "");
   if (eventsPayload) {

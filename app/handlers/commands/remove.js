@@ -1,36 +1,47 @@
-const { Event } = require("../../models");
+const { Event, Admin } = require("../../models");
 const { logger } = require("../../utils");
 
 const removeEventHandler = async (ctx) => {
   if (!ctx.state.isAdmin) {
     logger.warn(`${ctx.from.username} (${ctx.from.id}) попытался вызвать команду /remove`);
   } else {
-    const eventName = ctx.message.text.replace(/\/remove\s*/, "");
+    const eventId = ctx.message.text.replace(/\/remove\s*/, "");
     logger.info(
       `[ADMIN] ${ctx.from.username} (${
         ctx.from.id
-      }) вызвал команду /remove с параметром "${eventName}"`,
+      }) вызвал команду /remove с параметром "${eventId}"`,
     );
     try {
-      if (!eventName.length) {
+      if (!eventId.length) {
         ctx.reply("Вы не указали имя события для удаления.");
       } else {
-        const event = await Event.findOne({ name: eventName }).exec();
+        const event = await Event.findById(eventId).exec();
         if (event) {
+          const { name: eventName } = event;
           await event.remove();
-          ctx.replyWithMarkdown(`Событие *${eventName}* удалено.`);
+          ctx.replyWithMarkdown(`Событие "*${eventName}*" удалено.`);
           logger.info(
-            `[ADMIN] ${ctx.from.username} (${ctx.from.id}) удалил событие "${eventName}"`,
+            `[ADMIN] ${ctx.from.username} (${
+              ctx.from.id
+            }) удалил событие "${eventName}" (${eventId})`,
+          );
+          const admins = await Admin.find().exec();
+          admins.map((admin) =>
+            ctx.telegram.sendMessage(
+              admin.userId,
+              `${ctx.from.username} (${ctx.from.id}) удалил событие "*${eventName}*"`,
+              { parse_mode: "Markdown" },
+            ),
           );
         } else {
-          ctx.replyWithMarkdown(`Событие *${eventName}* не найдено.`);
+          ctx.replyWithMarkdown(`Событие \`${eventId}\` не найдено.`);
         }
       }
     } catch (err) {
       logger.error(
         `${ctx.from.username} (${
           ctx.from.id
-        }) попытался удалить событие "${eventName}" с ошибкой: ${err}`,
+        }) попытался удалить событие с \`${eventId}\` с ошибкой: ${err}`,
       );
       ctx.reply("Не удалось удалить событие.");
     }

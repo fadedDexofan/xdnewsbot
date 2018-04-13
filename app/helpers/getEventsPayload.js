@@ -7,7 +7,7 @@ const eventsToMessage = (events) =>
     const {
       description, startDate, price, name, maxParticipants, participants,
     } = event;
-    const date = moment(startDate).format("D MMMM YY, HH:mm");
+    const date = moment(startDate).format("D MMMM, HH:mm");
     const freePlaces = maxParticipants - participants.length;
     return `${acc}*${name}*\n${description}\n\n📆 ${date}\n🎟 Участие: ${price} ₽\n👥 Мест: ${freePlaces} из ${maxParticipants}\n\n`;
   }, "");

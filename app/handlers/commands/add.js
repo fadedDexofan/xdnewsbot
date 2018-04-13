@@ -1,12 +1,12 @@
-const { Event } = require("../../models");
+const { Event, Admin } = require("../../models");
 const { isJSON } = require("../../helpers");
 const { logger, moment } = require("../../utils");
 
 const addEventHandler = async (ctx) => {
   if (!ctx.state.isAdmin) {
-    logger.warn(`${ctx.from.username} (${ctx.from.id}) попытался вызвать команду /remove`);
+    logger.warn(`${ctx.from.username} (${ctx.from.id}) попытался вызвать команду /add`);
   } else {
-    let payload = ctx.message.text.replace("/add ", "");
+    let payload = ctx.message.text.replace(/\/add\s*/, "");
     logger.info(
       `${ctx.from.username} (${ctx.from.id}) вызвал команду /add с параметрами: ${payload}`,
     );
@@ -29,7 +29,15 @@ const addEventHandler = async (ctx) => {
       try {
         await Event.create(eventPayload);
         logger.info(`[ADMIN] ${ctx.from.username} (${ctx.from.id}) добавил событие "${name}"`);
-        ctx.replyWithMarkdown(`Событие *${name}* успешно добавлено.`);
+        ctx.replyWithMarkdown(`Событие "*${name}*" успешно добавлено.`);
+        const admins = await Admin.find().exec();
+        admins.map((admin) =>
+          ctx.telegram.sendMessage(
+            admin.userId,
+            `${ctx.from.username} (${ctx.from.id}) добавил событие "*${name}*"`,
+            { parse_mode: "Markdown" },
+          ),
+        );
       } catch (err) {
         logger.error(`Ошибка добавления события: ${err}`);
         ctx.reply("Ошибка добавления события.");
