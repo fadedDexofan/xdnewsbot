@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node app",
-    "pm2": "pm2 start ecosystem.config.js",
+    "pm2": "pm2 startOrRestart ecosystem.config.js",
     "dev": "nodemon --inspect app",
     "lint": "eslint app"
   },
@@ -13,7 +13,7 @@
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "moment": "^2.22.0",
-    "mongoose": "^5.0.13",
+    "mongoose": "^5.0.14",
     "telegraf": "^3.20.0",
     "telegraf-ratelimit": "^2.0.0",
     "winston": "^3.0.0-rc4",
@@ -22,7 +22,7 @@
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-import": "^2.11.0",
     "nodemon": "^1.17.3",
     "prettier-eslint": "^8.8.1"
   }
