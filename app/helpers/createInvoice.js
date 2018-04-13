@@ -5,7 +5,7 @@ module.exports = (event) => {
   if (event.url) buttonsPayload.push(Markup.urlButton("Подробнее", event.url));
   return {
     provider_token: process.env.PAYMENT_TOKEN,
-    start_parameter: "foo",
+    start_parameter: event.id,
     title: event.name,
     description: event.description,
     currency: "RUB",
