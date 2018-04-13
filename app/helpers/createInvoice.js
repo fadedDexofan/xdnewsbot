@@ -1,6 +1,4 @@
-const Telegraf = require("telegraf");
-
-const { Markup } = Telegraf;
+const { Markup } = require("telegraf");
 
 module.exports = (event) => {
   const buttonsPayload = [Markup.payButton("💳 Оплатить")];

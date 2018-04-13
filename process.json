@@ -1,0 +1,8 @@
+{
+  "name": "xdnews-bot",
+  "script": "app",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "restart_delay": 100
+}

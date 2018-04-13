@@ -4,7 +4,8 @@
   "main": "app",
   "license": "MIT",
   "scripts": {
-    "start": "pm2 start app",
+    "start": "node app",
+    "pm2": "pm2 --format process.json",
     "dev": "nodemon --inspect app",
     "lint": "eslint app"
   },

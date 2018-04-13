@@ -5,6 +5,8 @@ const DailyRotation = require("winston-daily-rotate-file");
 const { printf, timestamp, combine } = format;
 const logDir = "logs";
 
+const DEBUG = process.env.NODE_ENV !== "production";
+
 const tsFormat = () => new Date().toLocaleTimeString();
 const logFormat = printf(
   (info) => `[${info.level.toUpperCase()}][${info.timestamp}] ${info.message}`,
@@ -22,7 +24,7 @@ const logger = createLogger({
       timestamp,
       datePattern: "YYYY-MM-DD",
       prepend: true,
-      level: process.env.NODE_ENV === "development" ? "verbose" : "info",
+      level: DEBUG ? "verbose" : "info",
       maxSize: "5mb",
       maxFiles: "14d",
     }),
@@ -30,7 +32,7 @@ const logger = createLogger({
   exitOnError: false,
 });
 
-if (process.env.NODE_ENV !== "production") {
+if (DEBUG) {
   logger.add(
     new transports.Console({
       timestamp: tsFormat,
