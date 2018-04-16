@@ -2,7 +2,7 @@ const { Markup } = require("telegraf");
 
 const phoneHandler = async (ctx) => {
   ctx.replyWithMarkdown(
-    "Отправь мне свой номер телефона",
+    "Отправьте ваш номер телефона",
     Markup.keyboard([[Markup.contactRequestButton("Поделиться моим номером телефона")]])
       .oneTime()
       .resize()
