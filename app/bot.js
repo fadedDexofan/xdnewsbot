@@ -1,8 +1,9 @@
 require("dotenv").config();
 const Telegraf = require("telegraf");
+const session = require("telegraf/session");
 const express = require("express");
 const { connectDB } = require("./db");
-const { rateLimit, responseTime, checkAdmin } = require("./middlewares");
+const { rateLimit, responseTime } = require("./middlewares");
 const { logError } = require("./helpers");
 const { logger } = require("./utils");
 const handlers = require("./handlers");
@@ -11,17 +12,19 @@ const DEBUG = process.env.NODE_ENV === "development";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+bot.use(session());
 bot.use(rateLimit);
 bot.use(responseTime);
-bot.use(checkAdmin);
 bot.use(handlers.commands, handlers.messages);
 bot.use(handlers.actions, handlers.payments);
+bot.use(handlers.scenes);
 
 (async () => {
   try {
     await connectDB(process.env.DB_URL);
     logger.info("Бот успешно подключился к MongoDB");
     if (DEBUG) {
+      await bot.telegram.deleteWebhook();
       bot.startPolling();
     } else {
       const app = express();

@@ -1,8 +1,9 @@
 const { Event, Admin } = require("../../models");
+const { isAdmin } = require("../../helpers");
 const { logger } = require("../../utils");
 
 const removeEventHandler = async (ctx) => {
-  if (!ctx.state.isAdmin) {
+  if (!await isAdmin(ctx.message)) {
     logger.warn(`${ctx.from.username} (${ctx.from.id}) попытался вызвать команду /remove`);
   } else {
     const eventId = ctx.message.text.replace(/\/remove\s*/, "");
@@ -13,7 +14,7 @@ const removeEventHandler = async (ctx) => {
     );
     try {
       if (!eventId.length) {
-        ctx.reply("Вы не указали имя события для удаления.");
+        ctx.reply("Вы не указали id события для удаления.");
       } else {
         const event = await Event.findById(eventId).exec();
         if (event) {

@@ -5,12 +5,12 @@ const { moment } = require("../utils");
 const eventsToMessage = (events) =>
   events.reduce((acc, event) => {
     const {
-      description, startDate, price, name, maxParticipants, participants,
+      description, startDate, price, name, maxVisitors, visitors,
     } = event;
     const date = moment(startDate).format("D MMMM, HH:mm");
-    const freePlaces = maxParticipants - participants.length;
+    const freePlaces = maxVisitors - visitors.length;
     const enterPrice = price ? `${price} ₽` : "бесплатно";
-    return `${acc}*${name}*\n${description}\n\n📆 ${date}\n🎟 Участие: ${enterPrice}\n👥 Мест: ${freePlaces} из ${maxParticipants}\n\n`;
+    return `${acc}*${name}*\n${description}\n\n📆 ${date}\n🎟 Участие: ${enterPrice}\n👥 Мест: ${freePlaces} из ${maxVisitors}\n\n`;
   }, "");
 
 module.exports = async () => {
@@ -18,7 +18,7 @@ module.exports = async () => {
   events.sort((a, b) => a.startDate - b.startDate);
   const eventButtons = events
     .map((event) => [Markup.callbackButton(event.name, event.id)])
-    .concat([[Markup.callbackButton("🔄 Обновить", "update_events")]]);
+    .concat([[Markup.callbackButton("🔄 Обновить", "update_events"), Markup.callbackButton("Меню", "menu")]]);
   const eventsMessage = eventsToMessage(events) || "На ближайшее время нет событий 🕸";
   return [
     `*Текущие события:*\n\n${eventsMessage}`,

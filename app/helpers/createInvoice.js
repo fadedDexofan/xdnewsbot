@@ -11,11 +11,11 @@ module.exports = (event) => {
     currency: "RUB",
     photo_url: event.photoUrl,
     need_name: true,
-    need_phone_number: false,
+    need_phone_number: true,
     need_email: true,
     is_flexible: false,
     send_email_to_provider: true,
-    send_phone_number_to_provider: false,
+    send_phone_number_to_provider: true,
     need_shipping_address: false,
     provider_data: {
       receipt: {

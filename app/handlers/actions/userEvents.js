@@ -1,9 +1,11 @@
-const { Event } = require("../../models");
+const { Event, Visitor } = require("../../models");
 const { moment } = require("../../utils");
+const { backButton } = require("../../buttons");
 
 const userEventsHandler = async (ctx) => {
+  const user = await Visitor.findOne({ userId: ctx.from.id }).exec();
   const userEvents = await Event.find({
-    "participants.userId": ctx.from.id,
+    visitors: user._id,
     startDate: { $gte: Date.now() },
   }).exec();
   const myEvents = userEvents.reduce((acc, event) => {
@@ -12,9 +14,9 @@ const userEventsHandler = async (ctx) => {
   }, "");
   if (myEvents) {
     const replyPayload = `*Вы зарегистрировались на:*\n\n${myEvents}`;
-    ctx.replyWithMarkdown(replyPayload);
+    ctx.editMessageText(replyPayload, backButton);
   } else {
-    ctx.reply("Вы никуда не зарегистрировались 🤷‍♂️");
+    ctx.editMessageText("Вы никуда не зарегистрировались 🤷‍♂️", backButton);
   }
 };
 

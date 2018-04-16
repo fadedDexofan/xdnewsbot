@@ -1,9 +1,9 @@
 const { Event, Admin } = require("../../models");
-const { isJSON } = require("../../helpers");
+const { isJSON, isAdmin } = require("../../helpers");
 const { logger, moment } = require("../../utils");
 
 const addEventHandler = async (ctx) => {
-  if (!ctx.state.isAdmin) {
+  if (!await isAdmin(ctx.message)) {
     logger.warn(`${ctx.from.username} (${ctx.from.id}) попытался вызвать команду /add`);
   } else {
     let payload = ctx.message.text.replace(/\/add\s*/, "");
@@ -13,7 +13,7 @@ const addEventHandler = async (ctx) => {
     if (payload && isJSON(payload)) {
       payload = JSON.parse(payload);
       const {
-        name, description, price, maxParticipants, photoUrl, url,
+        name, description, price, maxVisitors, photoUrl, url,
       } = payload;
       let { startDate } = payload;
       startDate = moment(startDate);
@@ -22,7 +22,7 @@ const addEventHandler = async (ctx) => {
         description,
         price,
         startDate,
-        maxParticipants,
+        maxVisitors,
         photoUrl,
         url,
       };
@@ -48,7 +48,7 @@ const addEventHandler = async (ctx) => {
   "description": !String,
   "price": !Number (0 || >=60),
   "startDate": !Date (YYYY-MM-DD HH:MM),
-  "maxParticipants": !Number,
+  "maxVisitors": !Number,
   "photoUrl": !String,
   "url": String
 }`;

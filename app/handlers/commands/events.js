@@ -1,8 +1,9 @@
 const { Event } = require("../../models");
+const { isAdmin } = require("../../helpers");
 const { logger } = require("../../utils");
 
 const eventsHandler = async (ctx) => {
-  if (!ctx.state.isAdmin) {
+  if (!await isAdmin(ctx.message)) {
     logger.warn(`${ctx.from.username} (${ctx.from.id}) попытался вызвать команду /events`);
   } else {
     logger.info(`${ctx.from.username} (${ctx.from.id}) вызвал команду /events`);

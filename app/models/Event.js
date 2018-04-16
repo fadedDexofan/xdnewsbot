@@ -1,15 +1,8 @@
 const mongoose = require("mongoose");
+const Visitor = require("./Visitor");
 
 const { Schema } = mongoose;
-
-const participantSchema = new Schema(
-  {
-    name: String,
-    email: String,
-    userId: Number,
-  },
-  { _id: false, timestamps: true },
-);
+const { ObjectId } = Schema.Types;
 
 const eventSchema = new Schema(
   {
@@ -26,10 +19,15 @@ const eventSchema = new Schema(
     description: { type: String, required: true },
     startDate: { type: Date, required: true, default: Date.now() },
     photoUrl: { type: String, required: false },
-    participants: [participantSchema],
-    maxParticipants: { type: Number, required: true, default: 30 },
+    visitors: [{ type: ObjectId, ref: "Visitor" }],
+    maxVisitors: { type: Number, required: true, default: 30 },
   },
   { timestamps: true },
 );
+
+eventSchema.pre("remove", function updateUsers(next) {
+  Visitor.update({ events: this._id }, { $pull: { events: this._id } }, { multi: true }).exec();
+  next();
+});
 
 module.exports = mongoose.model("Event", eventSchema);

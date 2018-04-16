@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { logger } = require("../utils");
 
 const DEBUG = process.env.NODE_ENV === "development";
 
@@ -17,7 +18,7 @@ module.exports = async (url) =>
         reject(error);
       })
       .on("close", () => {
-        console.log("MongoDB connection closed");
+        logger.info("Соединение с MongoDB закрыто");
       })
       .on("open", () => {
         resolve();

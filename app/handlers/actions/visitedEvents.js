@@ -1,9 +1,11 @@
-const { Event } = require("../../models");
+const { Event, Visitor } = require("../../models");
 const { moment } = require("../../utils");
+const { backButton } = require("../../buttons");
 
 const visitedEventsHandler = async (ctx) => {
+  const user = await Visitor.findOne({ userId: ctx.from.id }).exec();
   const events = await Event.find({
-    "participants.userId": ctx.from.id,
+    visitors: user._id,
     startDate: { $lt: Date.now() },
   }).exec();
   const eventsPayload = events.reduce((acc, event) => {
@@ -12,9 +14,9 @@ const visitedEventsHandler = async (ctx) => {
   }, "");
   if (eventsPayload) {
     const replyPayload = `*Посещенные вами события:*\n\n${eventsPayload}`;
-    ctx.replyWithMarkdown(replyPayload);
+    ctx.editMessageText(replyPayload, backButton);
   } else {
-    ctx.reply("Вы не посетили ни одного события 🙁");
+    ctx.editMessageText("Вы не посетили ни одного события 🙁", backButton);
   }
 };
 
