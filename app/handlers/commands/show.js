@@ -40,8 +40,8 @@ const showHandler = async (ctx) => {
     const fileContents = Buffer.from(csv);
     fs.writeFile(tempPath, fileContents, async () => {
       await ctx.replyWithDocument({
-        source: tempPath,
-		filename: filename,
+        source: fs.createReadStream(tempPath),
+        filename,
       });
     });
   } catch (err) {
