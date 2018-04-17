@@ -4,6 +4,7 @@ const isJSON = require("./isJSON");
 const logError = require("./logError");
 const getEventsPayload = require("./getEventsPayload");
 const sendInvoice = require("./sendInvoice");
+const getCsv = require("./getCsv");
 
 module.exports = {
   createInvoice,
@@ -12,4 +13,5 @@ module.exports = {
   logError,
   getEventsPayload,
   sendInvoice,
+  getCsv,
 };

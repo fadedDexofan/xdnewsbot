@@ -1,6 +1,6 @@
-const { Event, Visitor } = require("../../models");
-const { logger, moment } = require("../../utils");
-const json2csv = require("json2csv").parse;
+const { Event } = require("../../models");
+const { logger } = require("../../utils");
+const { getCsv } = require("../../helpers");
 
 const showHandler = async (ctx) => {
   const eventId = ctx.message.text.replace(/\/show\s*/, "");
@@ -19,17 +19,7 @@ const showHandler = async (ctx) => {
       ctx.replyWithMarkdown(message);
       return;
     }
-    const eventVisitors = await Visitor.find({ events: event._id }).exec();
-    const eventVisitorsObject = eventVisitors.map((visitor) => ({
-      name: visitor.name,
-      email: visitor.email,
-      phone: visitor.phone,
-    }));
-    const fields = ["name", "email", "phone"];
-    const opts = { fields };
-    const csv = json2csv(eventVisitorsObject, opts);
-    const filename = `${event.name}_${moment().format("YYYY-MM-DD_HH-mm")}.csv`;
-    const fileContents = Buffer.from(csv);
+    const [fileContents, filename] = await getCsv(event);
     await ctx.replyWithDocument({
       source: fileContents,
       filename,

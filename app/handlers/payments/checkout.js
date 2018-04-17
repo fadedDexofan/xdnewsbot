@@ -1,10 +1,20 @@
 const { Event, Visitor } = require("../../models");
 const { Markup } = require("telegraf");
-const { sendInvoice } = require("../../helpers");
+const { sendInvoice, getCsv } = require("../../helpers");
 const { logger } = require("../../utils");
 
 const checkoutHandler = async (ctx) => {
   const callback = ctx.update.callback_query.data;
+  if (callback.includes("_show")) {
+    const eventId = callback.replace("_show", "");
+    const event = await Event.findById(eventId);
+    const [fileContents, filename] = await getCsv(event);
+    await ctx.replyWithDocument({
+      source: fileContents,
+      filename,
+    });
+    return;
+  }
   const eventId = callback.replace("_register", "");
   const event = await Event.findById(eventId).exec();
   if (/register/.test(callback)) {
