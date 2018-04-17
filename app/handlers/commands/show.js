@@ -13,7 +13,7 @@ const showHandler = async (ctx) => {
         ctx.replyWithMarkdown(`Событие c Id \`${eventId}\` не найдено.`);
         return;
       }
-      if (!event.participants.length) {
+      if (!event.participants) {
         eventVisitorsMessage.concat("Нет зарегистрировавшихся.");
         ctx.replyWithMarkdown(eventVisitorsMessage);
         return;
