@@ -8,13 +8,13 @@ const showHandler = async (ctx) => {
       ctx.reply("Вы не указали id события.");
     } else {
       const event = await Event.findById(eventId).exec();
-      const eventVisitorsMessage = `Зарегистрировавшиеся на *${event.name}*:\n\n`;
+      let eventVisitorsMessage = `Зарегистрировавшиеся на *${event.name}*:\n\n`;
       if (!event) {
         ctx.replyWithMarkdown(`Событие c Id \`${eventId}\` не найдено.`);
         return;
       }
       if (!event.participants) {
-        eventVisitorsMessage.concat("Нет зарегистрировавшихся.");
+        eventVisitorsMessage = eventVisitorsMessage.concat(["Нет зарегистрировавшихся."]);
         ctx.replyWithMarkdown(eventVisitorsMessage);
         return;
       }
@@ -23,7 +23,8 @@ const showHandler = async (ctx) => {
         (visitor) =>
           `*Имя:* ${visitor.name}\n*Эл. почта:* ${visitor.email}\n*Телефон:* ${visitor.phone}\n\n`,
       );
-      ctx.replyWithMarkdown(eventVisitorsMessage.concat(eventVisitorsPayload));
+      eventVisitorsMessage = eventVisitorsMessage.concat(eventVisitorsPayload);
+      ctx.replyWithMarkdown(eventVisitorsMessage);
     }
   } catch (err) {
     logger.error(
