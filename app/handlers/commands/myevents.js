@@ -1,4 +1,5 @@
 const { Event } = require("../../models");
+const { Markup } = require("telegraf");
 
 const myEventsHandler = async (ctx) => {
   const userId = ctx.from.id;
@@ -13,7 +14,10 @@ const myEventsHandler = async (ctx) => {
     );
     organizerEvents.concat("\nДля просмотра участников используйте команду `/show <id события>`");
   }
-  ctx.replyWithMarkdown(organizerEvents);
+  const eventsButtons = events
+    .map((event) => [Markup.callbackButton(event.name, `${event.id}_show`)])
+    .concat([[Markup.callbackButton(Markup.callbackButton("Меню", "menu"))]]);
+  ctx.replyWithMarkdown(organizerEvents, Markup.inlineKeyboard(eventsButtons));
 };
 
 module.exports = myEventsHandler;
