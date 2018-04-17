@@ -21,9 +21,11 @@ const showHandler = async (ctx) => {
     }
     const [fileContents, filename] = await getCsv(event);
     await ctx.replyWithDocument({
+      caption: "Выгрузка участников",
       source: fileContents,
       filename,
     });
+    logger.info(`${ctx.from.username} (${ctx.from.id}) выгрузил участников "${event.name}"`);
   } catch (err) {
     logger.error(
       `${ctx.from.username} (${

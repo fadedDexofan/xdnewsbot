@@ -7,12 +7,15 @@ const checkoutHandler = async (ctx) => {
   const callback = ctx.update.callback_query.data;
   if (callback.includes("_show")) {
     const eventId = callback.replace("_show", "");
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventId).exec();
     const [fileContents, filename] = await getCsv(event);
+    ctx.answerCbQuery();
     await ctx.replyWithDocument({
+      caption: "Выгрузка участников",
       source: fileContents,
       filename,
     });
+    logger.info(`${ctx.from.username} (${ctx.from.id}) выгрузил участников "${event.name}"`);
     return;
   }
   const eventId = callback.replace("_register", "");
