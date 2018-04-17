@@ -14,9 +14,9 @@ const myEventsHandler = async (ctx) => {
     );
     organizerEvents.concat("\nДля просмотра участников используйте команду `/show <id события>`");
   }
-  const eventsButtons = events.map((event) => [
-    Markup.callbackButton(event.name, `${event.id}_show`),
-  ]);
+  const eventsButtons = events
+    .map((event) => [Markup.callbackButton(event.name, `${event.id}_show`)])
+    .concat([Markup.callbackButton("Меню", "menu")]);
   ctx.replyWithMarkdown(organizerEvents, Markup.inlineKeyboard(eventsButtons).extra());
 };
 
