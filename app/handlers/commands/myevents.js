@@ -17,7 +17,10 @@ const myEventsHandler = async (ctx) => {
   const eventsButtons = events
     .map((event) => [Markup.callbackButton(event.name, `${event.id}_show`)])
     .concat([[Markup.callbackButton(Markup.callbackButton("Меню", "menu"))]]);
-  ctx.replyWithMarkdown(organizerEvents, Markup.inlineKeyboard(eventsButtons).resize().extra());
+  ctx.replyWithMarkdown(
+    organizerEvents,
+    Markup.inlineKeyboard(eventsButtons).extra({ parse_mode: "Markdown" }),
+  );
 };
 
 module.exports = myEventsHandler;
