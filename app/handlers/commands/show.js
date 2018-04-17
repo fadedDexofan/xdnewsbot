@@ -5,10 +5,10 @@ const showHandler = async (ctx) => {
   const eventId = ctx.message.text.replace(/\/show\s*/, "");
   try {
     if (!eventId.length) {
-      ctx.reply("Вы не указали id события для удаления.");
+      ctx.reply("Вы не указали id события.");
     } else {
       const event = await Event.findById(eventId).exec();
-      const eventVisitorsMessage = `Зарегистрировавшиеся на ${event.name}:\n\n`;
+      const eventVisitorsMessage = `Зарегистрировавшиеся на *${event.name}*:\n\n`;
       if (!event) {
         ctx.replyWithMarkdown(`Событие c Id \`${eventId}\` не найдено.`);
         return;
@@ -23,7 +23,7 @@ const showHandler = async (ctx) => {
         (visitor) =>
           `*Имя:* ${visitor.name}\n*Эл. почта:* ${visitor.email}\n*Телефон:* ${visitor.phone}\n\n`,
       );
-      ctx.replyWithMarkdown(eventVisitorsMessage.concat(eventVisitorsPayload));
+      ctx.replyWithMarkdown(eventVisitorsMessage.concat(...eventVisitorsPayload));
     }
   } catch (err) {
     logger.error(
