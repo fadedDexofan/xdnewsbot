@@ -11,7 +11,6 @@ const checkoutHandler = async (ctx) => {
     const [fileContents, filename] = await getCsv(event);
     ctx.answerCbQuery();
     await ctx.replyWithDocument({
-      caption: "Выгрузка участников",
       source: fileContents,
       filename,
     });

@@ -12,7 +12,8 @@ const startHandler = async (ctx) => {
     await Visitor.create({ userId, name: username });
   }
   const eventId = ctx.message.text.replace(/\/start\s*/, "");
-  ctx.reply(...menu);
+  const [text, keyboard] = await menu(userId);
+  ctx.reply(text, keyboard);
   if (eventId.length) {
     const event = await Event.findById(eventId).exec();
     if (event) {

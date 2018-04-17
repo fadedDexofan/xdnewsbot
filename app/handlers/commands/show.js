@@ -21,7 +21,6 @@ const showHandler = async (ctx) => {
     }
     const [fileContents, filename] = await getCsv(event);
     await ctx.replyWithDocument({
-      caption: "Выгрузка участников",
       source: fileContents,
       filename,
     });
