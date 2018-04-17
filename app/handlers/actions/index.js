@@ -8,6 +8,7 @@ const profileHandler = require("./profile");
 const contactHandler = require("./contact");
 const phoneHandler = require("./phone");
 const processMessage = require("./processMessage");
+const myEventsHandler = require("./myevents");
 
 const composer = new Composer();
 
@@ -28,5 +29,6 @@ composer.action("current_events", currentEventsHandler);
 composer.action("user_events", userEventsHandler);
 composer.action("visited_events", visitedEventsHandler);
 composer.action("profile", profileHandler);
+composer.action("my_events", myEventsHandler);
 
 module.exports = composer;
