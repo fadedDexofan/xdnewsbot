@@ -1,31 +1,51 @@
 const { Event, Visitor } = require("../../models");
-const { logger } = require("../../utils");
+const { logger, moment } = require("../../utils");
+const fs = require("fs");
+const json2csv = require("json2csv").parse;
+
+const tempDir = "temp";
+
+if (!fs.existsSync(tempDir)) {
+  fs.mkdirSync(tempDir);
+}
 
 const showHandler = async (ctx) => {
   const eventId = ctx.message.text.replace(/\/show\s*/, "");
   try {
     if (!eventId.length) {
       ctx.reply("Вы не указали id события.");
-    } else {
-      const event = await Event.findById(eventId).exec();
-      let eventVisitorsMessage = `Зарегистрировавшиеся на *${event.name}*:\n\n`;
-      if (!event) {
-        ctx.replyWithMarkdown(`Событие c Id \`${eventId}\` не найдено.`);
-        return;
-      }
-      if (!event.visitors) {
-        eventVisitorsMessage = eventVisitorsMessage.concat(["Нет зарегистрировавшихся."]);
-        ctx.replyWithMarkdown(eventVisitorsMessage);
-        return;
-      }
-      const eventVisitors = await Visitor.find({ events: event._id }).exec();
-      const eventVisitorsPayload = eventVisitors.map(
-        (visitor) =>
-          `*Имя:* ${visitor.name}\n*Эл. почта:* ${visitor.email}\n*Телефон:* ${visitor.phone}\n\n`,
-      );
-      eventVisitorsMessage = eventVisitorsMessage.concat(eventVisitorsPayload);
-      ctx.replyWithMarkdown(eventVisitorsMessage);
+      return;
     }
+    const event = await Event.findById(eventId).exec();
+    if (!event) {
+      ctx.replyWithMarkdown(`Событие c Id \`${eventId}\` не найдено.`);
+      return;
+    }
+    if (!event.visitors) {
+      const message = `Нет зарегистрировавшихся на *${event.name}*`;
+      ctx.replyWithMarkdown(message);
+      return;
+    }
+    const eventVisitors = await Visitor.find({ events: event._id }).exec();
+    const eventVisitorsObject = eventVisitors.map((visitor) => ({
+      name: visitor.name,
+      email: visitor.email,
+      phone: visitor.phone,
+    }));
+    const fields = ["name", "email", "phone"];
+    const opts = { fields };
+    const csv = json2csv(eventVisitorsObject, opts);
+    const filename = `${event.name}_${moment().format("YYYY-MM-DD_HH-mm")}.csv`;
+    const tempPath = `temp/${filename}`;
+    const fileContents = Buffer.from(csv);
+    fs.writeFile(tempPath, fileContents, () => {
+      ctx.replyWithDocument({
+        source: tempPath,
+      });
+      fs.unlink(tempPath, (err) => {
+        if (err) throw err;
+      });
+    });
   } catch (err) {
     logger.error(
       `${ctx.from.username} (${
