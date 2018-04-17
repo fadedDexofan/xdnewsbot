@@ -15,7 +15,8 @@ const addEventHandler = async (ctx) => {
       const {
         name, description, price, maxVisitors, photoUrl, url,
       } = payload;
-      let { startDate } = payload;
+      let { startDate, organizer } = payload;
+      organizer = organizer || ctx.from.id;
       startDate = moment(startDate);
       const eventPayload = {
         name,
@@ -23,6 +24,7 @@ const addEventHandler = async (ctx) => {
         price,
         startDate,
         maxVisitors,
+        organizer,
         photoUrl,
         url,
       };
@@ -49,6 +51,7 @@ const addEventHandler = async (ctx) => {
   "price": !Number (0 || >=60),
   "startDate": !Date (YYYY-MM-DD HH:MM),
   "maxVisitors": !Number,
+  "organizer": Number,
   "photoUrl": !String,
   "url": String
 }`;

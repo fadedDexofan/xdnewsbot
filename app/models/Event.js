@@ -21,6 +21,7 @@ const eventSchema = new Schema(
     photoUrl: { type: String, required: false },
     visitors: [{ type: ObjectId, ref: "Visitor" }],
     maxVisitors: { type: Number, required: true, default: 30 },
+    organizer: Number,
   },
   { timestamps: true },
 );
