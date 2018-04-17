@@ -38,7 +38,7 @@ const showHandler = async (ctx) => {
     const filename = `${event.name}_${moment().format("YYYY-MM-DD_HH-mm")}.csv`;
     const tempPath = `temp/${filename}`;
     const fileContents = Buffer.from(csv);
-    fs.writeFile(tempPath, fileContents, () => {
+    fs.writeFile(tempPath, fileContents, async () => {
       await ctx.replyWithDocument({
         source: tempPath,
 		filename: filename,
