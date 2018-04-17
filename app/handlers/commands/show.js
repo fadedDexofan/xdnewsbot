@@ -39,11 +39,9 @@ const showHandler = async (ctx) => {
     const tempPath = `temp/${filename}`;
     const fileContents = Buffer.from(csv);
     fs.writeFile(tempPath, fileContents, () => {
-      ctx.replyWithDocument({
+      await ctx.replyWithDocument({
         source: tempPath,
-      });
-      fs.unlink(tempPath, (err) => {
-        if (err) throw err;
+		filename: filename,
       });
     });
   } catch (err) {
