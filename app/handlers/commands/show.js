@@ -38,9 +38,13 @@ const showHandler = async (ctx) => {
     const filename = `${event.name}_${moment().format("YYYY-MM-DD_HH-mm")}.csv`;
     const tempPath = `temp/${filename}`;
     const fileContents = Buffer.from(csv);
+    await ctx.replyWithDocument({
+      source: fileContents,
+      filename,
+    });
     fs.writeFile(tempPath, fileContents, () => {});
-    ctx.replyWithDocument({
-      source: tempPath,
+    await ctx.replyWithDocument({
+      source: fs.createReadStream(tempPath),
       filename,
     });
   } catch (err) {
