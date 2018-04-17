@@ -1,13 +1,6 @@
 const { Event, Visitor } = require("../../models");
 const { logger, moment } = require("../../utils");
-const fs = require("fs");
 const json2csv = require("json2csv").parse;
-
-const tempDir = "temp";
-
-if (!fs.existsSync(tempDir)) {
-  fs.mkdirSync(tempDir);
-}
 
 const showHandler = async (ctx) => {
   const eventId = ctx.message.text.replace(/\/show\s*/, "");
@@ -36,15 +29,9 @@ const showHandler = async (ctx) => {
     const opts = { fields };
     const csv = json2csv(eventVisitorsObject, opts);
     const filename = `${event.name}_${moment().format("YYYY-MM-DD_HH-mm")}.csv`;
-    const tempPath = `temp/${filename}`;
     const fileContents = Buffer.from(csv);
     await ctx.replyWithDocument({
       source: fileContents,
-      filename,
-    });
-    fs.writeFile(tempPath, fileContents, () => {});
-    await ctx.replyWithDocument({
-      source: fs.createReadStream(tempPath),
       filename,
     });
   } catch (err) {
