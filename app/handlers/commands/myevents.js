@@ -2,7 +2,7 @@ const { Event } = require("../../models");
 
 const myEventsHandler = async (ctx) => {
   const userId = ctx.from.id;
-  const events = await Event.find({ orginizer: userId }).exec();
+  const events = await Event.find({ organizer: userId }).exec();
   let organizerEvents = "";
   if (!events.length) {
     organizerEvents = "Вы не является организатором события.";
