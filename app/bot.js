@@ -28,8 +28,9 @@ bot.use(handlers.scenes);
       bot.startPolling();
     } else {
       const app = express();
-      app.use(bot.webhookCallback("/hgQbAWfe"));
-      bot.telegram.setWebhook("https://xdnews-bot.xadev.ru:443/hgQbAWfe");
+      const { WEBHOOK_LINK } = process.env;
+      app.use(bot.webhookCallback(`/${WEBHOOK_LINK}`));
+      bot.telegram.setWebhook(`https://xdnews-bot.togudev.ru:443/${WEBHOOK_LINK}`);
       app.listen(3000, () => {
         logger.info("Запущен локальный сервер на порту 3000");
       });
