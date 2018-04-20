@@ -6,4 +6,4 @@ RUN npm install --production --silent && mv node_modules ../
 RUN npm i -g pm2
 COPY . .
 EXPOSE 3000
-CMD npm run pm2
+CMD npm run docker
