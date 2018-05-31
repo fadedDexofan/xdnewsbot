@@ -2,6 +2,7 @@ require("dotenv").config();
 const Telegraf = require("telegraf");
 const session = require("telegraf/session");
 const express = require("express");
+const SocksProxyAgent = require("socks-proxy-agent");
 const { connectDB } = require("./db");
 const { rateLimit, responseTime } = require("./middlewares");
 const { logError } = require("./helpers");
@@ -10,7 +11,11 @@ const handlers = require("./handlers");
 
 const DEBUG = process.env.NODE_ENV === "development";
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(process.env.BOT_TOKEN, {
+  telegram: {
+    agent: new SocksProxyAgent("socks://127.0.0.1:9150"),
+  },
+});
 
 bot.use(session());
 bot.use(rateLimit);
@@ -40,6 +45,6 @@ bot.use(handlers.scenes);
     bot.catch(logError);
     logger.info(`Бот ${bot.options.username} успешно запущен`);
   } catch (err) {
-    logger.log(`Во время запуска бота произошла ошибка: ${err}`);
+    logger.error(`Во время запуска бота произошла ошибка: ${err}`);
   }
 })();

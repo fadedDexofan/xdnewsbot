@@ -1,16 +1,16 @@
-const { createLogger, format, transports } = require("winston");
 const fs = require("fs");
+const { createLogger, format, transports } = require("winston");
 const DailyRotation = require("winston-daily-rotate-file");
 
-const { printf, timestamp, combine } = format;
+const {
+  combine, colorize, timestamp, printf,
+} = format;
+
 const logDir = "logs";
 
 const DEBUG = process.env.NODE_ENV === "development";
 
-const tsFormat = () => new Date().toLocaleTimeString();
-const logFormat = printf(
-  (info) => `[${info.level.toUpperCase()}][${info.timestamp}] ${info.message}`,
-);
+const logFormat = printf((info) => `[${info.timestamp}] [${info.level}]: ${info.message}`);
 
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
@@ -35,9 +35,7 @@ const logger = createLogger({
 if (DEBUG) {
   logger.add(
     new transports.Console({
-      timestamp: tsFormat,
-      colorize: true,
-      level: "info",
+      format: combine(colorize(), timestamp(), logFormat),
     }),
   );
 }
