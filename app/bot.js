@@ -31,7 +31,7 @@ bot.use(handlers.scenes);
       const app = express();
       const { WEBHOOK_LINK } = process.env;
       app.use(bot.webhookCallback(`/${WEBHOOK_LINK}`));
-      bot.telegram.setWebhook(`https://xdnews-bot.togudev.ru:443/${WEBHOOK_LINK}`);
+      bot.telegram.setWebhook(`https://xdevents.mourka.io:443/${WEBHOOK_LINK}`);
       app.listen(3000, () => {
         logger.info("Запущен локальный сервер на порту 3000");
       });
