@@ -35,6 +35,7 @@ const logger = createLogger({
 if (DEBUG) {
   logger.add(
     new transports.Console({
+      level: "debug",
       format: combine(colorize(), timestamp(), logFormat),
     }),
   );
