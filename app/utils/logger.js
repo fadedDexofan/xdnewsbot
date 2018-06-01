@@ -3,7 +3,7 @@ const { createLogger, format, transports } = require("winston");
 const DailyRotation = require("winston-daily-rotate-file");
 
 const {
-  combine, colorize, timestamp, printf,
+  combine, colorize, timestamp, printf, prettyPrint,
 } = format;
 
 const logDir = "logs";
@@ -17,7 +17,7 @@ if (!fs.existsSync(logDir)) {
 }
 
 const logger = createLogger({
-  format: combine(timestamp(), logFormat),
+  format: combine(timestamp(), prettyPrint()),
   transports: [
     new DailyRotation({
       filename: `${logDir}/%DATE%.log`,
