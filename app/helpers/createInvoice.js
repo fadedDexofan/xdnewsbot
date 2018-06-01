@@ -11,24 +11,24 @@ module.exports = (event) => {
     currency: "RUB",
     photo_url: event.photoUrl,
     need_name: true,
-    need_phone_number: true,
+    need_phone_number: false,
     need_email: true,
     is_flexible: false,
     send_email_to_provider: true,
-    send_phone_number_to_provider: true,
+    send_phone_number_to_provider: false,
     need_shipping_address: false,
-    provider_data: {
+    provider_data: JSON.stringify({
       receipt: {
         items: [
           {
             description: event.name,
-            quantity: "1.00",
+            quantity: "1",
             amount: { value: `${event.price}.00`, currency: "RUB" },
             vat_code: 1,
           },
         ],
       },
-    },
+    }),
     prices: [{ label: event.name, amount: Math.trunc(event.price * 100) }],
     payload: { id: event.id },
     reply_markup: Markup.inlineKeyboard(buttonsPayload),
